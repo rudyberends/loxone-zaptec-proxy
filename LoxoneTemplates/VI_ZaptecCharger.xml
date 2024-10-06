@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VirtualInHttp Title="ZaptecCharger" Comment="" Address="http://192.168.1.252:6000/status" HintText="" PollingTime="60">
+	<Info templateType="2" minVersion="15020930"/>
+	<VirtualInHttpCmd Title="Charging" Comment="" Check="&quot;charging&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v&gt;" HintText=""/>
+	<VirtualInHttpCmd Title="Connected" Comment="" Check="&quot;connected&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v&gt;" HintText=""/>
+	<VirtualInHttpCmd Title="MeterReading" Comment="" Check="&quot;meter_reading&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v.3&gt;" HintText=""/>
+	<VirtualInHttpCmd Title="Power" Comment="" Check="&quot;power&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v.2&gt;" HintText=""/>
+	<VirtualInHttpCmd Title="Energy" Comment="" Check="&quot;energy&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v.2&gt;" HintText=""/>
+	<VirtualInHttpCmd Title="UID" Comment="" Check="&quot;uid&quot;:\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="-10000" MaxVal="10000" Unit="&lt;v&gt;" HintText=""/>
+</VirtualInHttp>

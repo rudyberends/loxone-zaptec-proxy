@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  loxone-zaptec-proxy:
+    container_name: loxone-zaptec-proxy
+    image: ghcr.io/rudyberends/rudyberends/loxone-zaptec-proxy:latest
+    hostname: lzp01
+    env_file:
+        - .env.example
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 6000:6000

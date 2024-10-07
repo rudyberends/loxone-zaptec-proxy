@@ -18,11 +18,9 @@ export const httpsRequest = async (endpoint: string, postData: string | null = n
     hostname: 'api.zaptec.com', // Static hostname
     path: `${endpoint}`, // Static path with dynamic endpoint
     headers: {
-      'Content-Type': 'application/json', // Default content type
+      'Content-Type': endpoint === '/oauth/token' ? 'application/x-www-form-urlencoded' : 'application/json',
     },
   };
-
-  console.log(options)
 
   // If an access token is provided, add it to the Authorization header
   if (accessToken) {

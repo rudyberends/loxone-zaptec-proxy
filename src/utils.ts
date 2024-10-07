@@ -4,25 +4,43 @@ import logger from './utils/troxorlogger';
 /**
  * Makes an HTTPS request with the given options and optional post data.
  *
- * @param {https.RequestOptions} options - The options for the HTTPS request, including method, hostname, path, headers, etc.
- * @param {string | null} postData - Optional data to be sent in the body of the request. If no data is needed, pass null.
+ * @param {string} endpoint - The API endpoint to call.
+ * @param {string | null} postData - Optional data to be sent in the body of the request.
+ * @param {string | null} accessToken - Optional access token for authorization. If provided, it will be used in the request.
  * @returns {Promise<string>} A promise that resolves with the response data as a string if the request is successful.
  * 
  * @throws {Error} Throws an error if the request fails or if the response status code indicates an error.
  */
-export const httpsRequest = (options: https.RequestOptions, postData: string | null = null): Promise<string> => {
+export const httpsRequest = async (endpoint: string, postData: string | null = null, accessToken: string | null = null): Promise<string> => {
+  // Build the request options
+  const options: https.RequestOptions = {
+    method: postData ? 'POST' : 'GET',
+    hostname: 'api.zaptec.com', // Static hostname
+    path: `${endpoint}`, // Static path with dynamic endpoint
+    headers: {
+      'Content-Type': 'application/json', // Default content type
+    },
+  };
+
+  console.log(options)
+
+  // If an access token is provided, add it to the Authorization header
+  if (accessToken) {
+    options.headers = {
+      ...options.headers, // Preserve existing headers
+      Authorization: `Bearer ${accessToken}`, // Add the Bearer token
+    };
+  }
+
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = '';
-      
-      // Collect data chunks as they come in
+
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => {
-        // Resolve the promise if the response status code indicates success
         if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
           resolve(data);
         } else {
-          // Log error and reject the promise if the status code indicates an error
           const errorMessage = `Request failed with status ${res.statusCode}: ${data}`;
           logger.error(errorMessage);
           reject(new Error(errorMessage));
@@ -30,15 +48,11 @@ export const httpsRequest = (options: https.RequestOptions, postData: string | n
       });
     });
 
-    req.on('error', (error) => {
-      // Log any request errors and reject the promise
-      logger.error('Request error:', error);
-      reject(error);
-    });
+    req.on('error', (error) => reject(error));
 
-    // If there is post data, write it to the request
+    // If there is post data, write it to the request body
     if (postData) req.write(postData);
-    
+
     // End the request
     req.end();
   });
@@ -54,7 +68,7 @@ export const httpsRequest = (options: https.RequestOptions, postData: string | n
  * @throws {Error} Throws an error if the OCMF data format is invalid or the expected data structure is not found.
  */
 export const extractMeterReading = (meterReadingData: string | undefined): number => {
-  if (!meterReadingData) return 0; // Return 0 if no data provided
+  if (!meterReadingData) return 0; // Return 0 if no data is provided
 
   try {
     // Split the data string to extract OCMF data

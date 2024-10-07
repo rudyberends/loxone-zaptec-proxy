@@ -1,4 +1,3 @@
-import https from 'https';
 import logger from './utils/troxorlogger';
 import { tokenManager } from './tokenManager';
 import { httpsRequest } from './utils';
@@ -38,18 +37,11 @@ class Charger {
   private async fetchChargerId(): Promise<void> {
     const accessToken = await tokenManager.getAccessToken(); // Get the access token for authorization
 
-    // Define the options for the HTTPS request
-    const options: https.RequestOptions = {
-      method: 'GET',
-      hostname: 'api.zaptec.com', // The API hostname
-      path: '/api/chargers', // The API path for fetching chargers
-      headers: {
-        Authorization: `Bearer ${accessToken}`, // Authorization header with the Bearer token
-      },
-    };
+    // No longer using `options`, just pass the endpoint and the access token to `httpsRequest`
+    const endpoint = '/api/chargers'; // API path for fetching chargers
 
     logger.info('Fetching charger ID...'); // Log the action
-    const data = await httpsRequest(options); // Send the HTTPS request
+    const data = await httpsRequest(endpoint, null, accessToken); // Use the new httpsRequest signature
     const jsonResponse: ChargerResponse = JSON.parse(data); // Parse the JSON response
 
     // Check if any chargers were returned

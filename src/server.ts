@@ -73,7 +73,7 @@ const sendChargerCommand = async (commandId: number): Promise<void> => {
   const endpoint = `/api/chargers/${chargerId}/sendCommand/${commandId}`; // Construct endpoint for sending commands
 
   logger.info(`Sending command ${commandId} to charger ID: ${chargerId}...`);
-  await httpsRequest(endpoint, null, accessToken); // Send the command using the access token
+  await httpsRequest(endpoint, '{}', accessToken); // Send the command using the access token
   logger.info(`Command ${commandId} sent successfully.`); // Log success
 };
 

@@ -36,22 +36,49 @@ class Charger {
    */
   private async fetchChargerId(): Promise<void> {
     const accessToken = await tokenManager.getAccessToken(); // Get the access token for authorization
-
-    // No longer using `options`, just pass the endpoint and the access token to `httpsRequest`
     const endpoint = '/api/chargers'; // API path for fetching chargers
 
     logger.info('Fetching charger ID...'); // Log the action
-    const data = await httpsRequest(endpoint, null, accessToken); // Use the new httpsRequest signature
-    const jsonResponse: ChargerResponse = JSON.parse(data); // Parse the JSON response
+    try {
+      const data = await httpsRequest(endpoint, null, accessToken); // Use the new httpsRequest signature
+      const jsonResponse: ChargerResponse = JSON.parse(data); // Parse the JSON response
 
-    // Check if any chargers were returned
-    if (!jsonResponse.Data || jsonResponse.Data.length === 0) {
-      throw new Error('No chargers found'); // Throw an error if no chargers are found
+      // Validate the response structure
+      if (!Array.isArray(jsonResponse.Data) || jsonResponse.Data.length === 0 || !jsonResponse.Data[0].Id) {
+        throw new Error('Invalid charger data format'); // More specific error
+      }
+
+      // Store the first charger ID
+      this.chargerId = jsonResponse.Data[0].Id;
+      logger.info(`Charger ID obtained: ${this.chargerId}`); // Log the obtained charger ID
+    } catch (error) {
+      logger.error('Failed to fetch charger ID:', error);
+      throw new Error('Failed to fetch charger ID'); // Throw a new error with context
     }
+  }
 
-    // Store the first charger ID
-    this.chargerId = jsonResponse.Data[0].Id;
-    logger.info(`Charger ID obtained: ${this.chargerId}`); // Log the obtained charger ID
+  /**
+   * Sends a command to the charger.
+   * 
+   * @param {number} commandId - The ID of the command to send (e.g., start or stop charging).
+   * 
+   * @returns {Promise<void>} A promise that resolves when the command is successfully sent.
+   *
+   * @throws {Error} Throws an error if the command cannot be sent.
+   */
+  async sendChargerCommand(commandId: number): Promise<void> {
+    const chargerId = await this.getChargerId(); // Ensure we have the charger ID
+    const accessToken = await tokenManager.getAccessToken(); // Get the access token for authorization
+    const endpoint = `/api/chargers/${chargerId}/sendCommand/${commandId}`; // Construct the endpoint
+
+    logger.info(`Sending command ${commandId} to charger ID: ${chargerId}...`);
+    try {
+      await httpsRequest(endpoint, '{}', accessToken); // Use the new httpsRequest signature
+      logger.info(`Command ${commandId} sent successfully.`); // Log successful command sending
+    } catch (error) {
+      logger.error(`Failed to send command ${commandId}:`, error);
+      throw new Error(`Failed to send command ${commandId}`); // Throw a new error with context
+    }
   }
 }
 

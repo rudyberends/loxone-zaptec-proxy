@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { ChargerState } from './stateManager'; // Import the ChargerState class
-import logger from './utils/troxorlogger';
+import { ChargerState } from '../stateManager'; // Import the ChargerState class
+import logger from '../utils/troxorlogger';
 
 // Load environment variables from .env file
 dotenv.config();

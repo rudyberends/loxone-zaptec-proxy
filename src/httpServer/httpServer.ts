@@ -1,7 +1,7 @@
-import { ChargerState } from './stateManager'; // Import the ChargerState class
 import * as http from 'http'; // Import the HTTP module
-import logger from './utils/troxorlogger';
-import { charger } from './charger'
+import { ChargerState } from '../stateManager'; // Import the ChargerState class
+import logger from '../utils/troxorlogger';
+import { charger } from '../Zaptec/charger'
 
 // Initialize the ChargerState singleton instance
 const chargerState = ChargerState.getInstance();

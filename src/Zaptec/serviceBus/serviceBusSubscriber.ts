@@ -1,28 +1,14 @@
 import { ServiceBusClient, ServiceBusReceiver } from '@azure/service-bus';
-import logger from './utils/troxorlogger'; // Logger utility
-import { tokenManager } from './tokenManager'; // Token management module
-import { httpsRequest } from './utils'; // Your existing HTTPS request utility
+import logger from '../../utils/troxorlogger'; // Logger utility
 import { messageDecoder } from './messageDecoder';
-import { ChargerState } from './stateManager';
+import { ChargerState } from '../../stateManager';
+import { installation } from '../installation';
 
 const chargerState = ChargerState.getInstance();
 
-// Fetch connection details for Azure Service Bus
-async function fetchConnectionDetails(accessToken: string) {
-    const endpoint = '/api/installation/f4782e01-956d-4237-85e7-9b362cef8954/messagingConnectionDetails';
-
-    try {
-        const response = await httpsRequest(endpoint, null, accessToken);
-        return JSON.parse(response); // Parse and return the JSON response
-    } catch (error) {
-        throw new Error(`Failed to fetch connection details: ${error}`);
-    }
-}
-
 // Process messages from Azure Service Bus
 export async function processMessages() {
-    const accessToken = await tokenManager.getAccessToken();
-    const connectionDetails = await fetchConnectionDetails(accessToken);
+    const connectionDetails = await installation.fetchConnectionDetails();
 
     const connectionString = `Endpoint=sb://${connectionDetails.Host}/;SharedAccessKeyName=${connectionDetails.Username};SharedAccessKey=${connectionDetails.Password}`;
     const serviceBusClient = new ServiceBusClient(connectionString);

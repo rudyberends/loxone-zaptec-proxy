@@ -1,6 +1,6 @@
 import querystring from 'querystring';
-import logger from './utils/troxorlogger';
-import { httpsRequest } from './utils';
+import logger from '../utils/troxorlogger';
+import { apiRequest } from './apiRequest';
 
 // Interface representing the structure of the token response from the OAuth API
 interface TokenResponse {
@@ -57,7 +57,7 @@ class TokenManager {
     const endpoint = '/oauth/token'; 
 
     logger.info('Refreshing token...'); // Log the action
-    const data = await httpsRequest(endpoint, postData); // Send the HTTPS request to refresh the token
+    const data = await apiRequest(endpoint, postData); // Send the HTTPS request to refresh the token
     const jsonResponse: TokenResponse = JSON.parse(data); // Parse the JSON response
 
     // Store the new access token and calculate the expiration time

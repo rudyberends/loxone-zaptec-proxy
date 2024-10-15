@@ -1,21 +1,10 @@
 import dotenv from 'dotenv'; // Import dotenv for environment variable management
-import { informMiniServer } from "./Loxone";
-import { charger } from './charger';
-import { tokenManager } from './tokenManager';
-import { httpsRequest } from './utils';
+import { informMiniServer } from "./Loxone/Loxone";
 import logger from './utils/troxorlogger';
+import { charger } from './Zaptec/charger';
 
 // Load environment variables from .env file
 dotenv.config();
-
-// Interface for the structure of the live data response from the charger
-interface LiveDataResponse {
-    State: {
-        [key: string]: {
-            ValueAsString?: string; // Optional string value for each state property
-        };
-    };
-}
 
 export interface ChargerStateData {
     loxoneID: string;
@@ -49,16 +38,9 @@ export class ChargerState {
 
     async initializeState(): Promise<void> {
         try {
-            // Fetch the charger ID and access token
-            const chargerId = await charger.getChargerId();
-            const accessToken = await tokenManager.getAccessToken();
-
-            const endpoint = `/api/chargers/${chargerId}/live`; // Construct endpoint for fetching live data
-
-            logger.info(`Fetching live data for charger ID: ${chargerId}...`);
-            const data = await httpsRequest(endpoint, null, accessToken); // Make an HTTP request with the access token
-            const jsonResponse: LiveDataResponse = JSON.parse(data); // Parse the JSON response
-
+           
+            const jsonResponse = await charger.pollChargerLiveData();
+            
             // Iterate over the JSON response and handle each ID
             for (const [id, state] of Object.entries(jsonResponse.State)) {
                 if (state && state.ValueAsString) {
@@ -85,7 +67,7 @@ export class ChargerState {
                 const deliveredValue = parseFloat(valueAsString) || 0; // Default to 0 if parsing fails
                 break;
             default:
-                logger.info(`[ID ${id}] Not interested in this ID. (${valueAsString})`);
+                logger.debug(`[ID ${id}] Not interested in this ID. (${valueAsString})`);
         }
     }
 

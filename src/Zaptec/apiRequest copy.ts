@@ -1,5 +1,5 @@
 import https from 'https';
-import logger from './utils/troxorlogger';
+import logger from '../utils/troxorlogger';
 
 /**
  * Makes an HTTPS request with the given options and optional post data.
